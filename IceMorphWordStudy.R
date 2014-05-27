@@ -94,42 +94,8 @@ MakeIceMorphWordStudy <- (directory1, directory2){
   
 }
 
-############################### Preliminary Junk and Bigram Log Likelihood Ratio Test Below
+############################### Bigram Log Likelihood Ratio Test Below
 
-# ΙceMorphWordStudy <- function(form, textlist){ 
-#   
-#   
-#   
-#   for(text in textlist){
-#     text <- scan(file=textfile, what="char", sep="\n") # read in .txt file
-#     words.list <- strsplit(text, "\\W+") # break up all words in .txt file using any whitespace chars; returns a list
-#     words.vector <- unlist(words.list) # converts list of words into a vector
-#     words.vector <- words.vector[which(words.vector!="")] # eliminates any potentially empty items in the list
-#     words.vector <- tolower(words.vector) # normalize all words to lowercase (I'm assuming that the .txt files have capitalization)
-#     text.tokens <- length(words.vector) # N= total number of tokens in text
-#     number.form <- length(which(words.vector == form))
-#     text.and.form.freq <- data.frame("Words in Corpus" = text.tokens, "Form Frequency" = number.form)
-#   }
-#   
-# }
-#
-# IceMorphTextStatistics <- function(textfile){
-#   text <- scan(file=textfile, what="char", sep="\n") # read in .txt file
-#   words.list <- strsplit(text, "\\W+") # break up all words in .txt file using any whitespace chars; returns a list
-#   words.vector <- unlist(words.list) # converts list of words into a vector
-#   words.vector <- words.vector[which(words.vector!="")] # eliminates any potentially empty items in the list
-#   words.vector <- tolower(words.vector) # normalize all words to lowercase (I'm assuming that the .txt files have capitalization)
-#   Frequency <- sort(table(words.vector), decreasing=T) # make a frequency table of words in the text
-#   
-#   words.freq.table <- data.frame(Frequency)
-#   text.tokens <- length(words.vector) # N= total number of tokens in text
-#   text.types <- length(rownames(words.freq.table))
-#   vocabulary.density <- text.tokens / text.types
-#   hapax.legomena <- length(which(words.freq.table == 1))
-#   
-#   Global.Stats <- data.frame("Total Word Count" = text.tokens, "Unique Word Count" = text.types, "Vocabulary Density" = vocabulary.density, "Words Occurring Only Once" = hapax.legomena)
-#   words.freq.rel.table <- data.frame(words.freq.table, "Relative Frequency" = words.freq.table[1] / text.tokens)
-#   names(words.freq.rel.table) <- c("Frequency", "Relative Frequency")
 #   
 #   bigram.vector<-c()
 #   window<-1
