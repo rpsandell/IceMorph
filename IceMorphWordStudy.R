@@ -1,13 +1,21 @@
-# Take in a form; return the parsing from the icemorph_corpus and frequency in each text.
-# textlist points to a directory of .txt files, each of which is a text in the corpus
-# Problem: texts themselves aren't normalized? 
+
+# Points to a directory of .txt files, each of which is a text in the corpus, and the directory where the parsed corpus is found
+
 # Make a list of dataframes containing the frequency of each word type in each text
-# Is it possible to apply the normalization function from the Haskell parser to the texts? If so, 
 # NB that lists in R are really more like hash tables, in having a TAG:value structure
 ### Returns a list (i.e., a hash table) where each tag is a word type in the corpus, and each value is a dataframe containing the name, total number of tokens, and number of tokens of that word type for each text
 ### Returns a list (i.e., a hash table) where each tag is the name of a text in the corpus, and each value is a dataframe containing basic frequency statistics
 
-### Actually, what you need to do is get the length of each text, and use those numbers to get the frequency of a lemma
+### The final object returned is a list of three lists: 
+  ### 1: a list containing three data frames, which give frequency information for the entire corpus: 
+      ### Frequency of each lemma, frequency of each POS, frequency of each "Declension" value
+      ### The tags for this list are "Lemma Frequency", "POS Frequency", "Declension Frequency"
+  ### 2: a list containing frequency information concerning each word relative to each text
+      ### this list contains a number of data frames equal to the number of word types in the entire corpus.
+      ### the tags for this list are the word forms themselves
+  ### 3: a list containing two data frames, which give frequency information on each individual text
+      ### the Global.Stats dataframe contains overall frequency information for that text
+      ### the words.freq.rel.table displays frequency information for each word in that text
 
 MakeIceMorphWordStudy <- (directory1, directory2){
   
@@ -24,11 +32,10 @@ MakeIceMorphWordStudy <- (directory1, directory2){
   global.declension.freq <- as.data.frame(sort(table(unlist(sapply(icemorph, "[[", "declension"))), decreasing=T))
   names(global.declension.freq) <- "Token Frequency"
   list.corpus.statistics <- list(global.lemma.freq, global.pos.freq, global.declension.freq)
-  names(list.corpus.statistics) <- c("Lemma.Frequency", "POS.Frequency", "Declension.Frequency")
+  names(list.corpus.statistics) <- c("Lemma Frequency", "POS Frequency", "Declension Frequency")
   
   list.word.freq.per.text <- list() ## This list will contain a number of dataframes equal to the number of word types, where each dataframe contains the frequency of that word per text
   list.of.text.bounds <- list() ## A list that will contain the starting and ending token, and number of tokens for each text.
-  list.of.texts <- list() # A list that will contain vectors of all the texts themselves
   
   text.start <- 1 # initialize the counter
   for(text in text.directory){
@@ -46,14 +53,14 @@ MakeIceMorphWordStudy <- (directory1, directory2){
     text.start <- text.start + text.tokens # Set new starting point for following text. 
   }
   
-  for(word in form.types.vector){
-    wordstudy <- data.frame()
-    for(text in list.of.texts){
+  for(word in form.types.vector){ # iterate over each word type
+    wordstudy <- data.frame() # create an empty dataframe to house the individual word statistics 
+    for(text in list.of.texts){ # iterate over each text
       text.name = names(text)
       text.tokens <- list.of.texts$text.name[3] # retrieve total number of tokens in text
-      word.freq.in.text <- length(which(sapply(icemorph[list.of.texts$text.name[1]:list.of.texts$text.name[2]], "[[", "form_norm") == word))
+      word.freq.in.text <- length(which(sapply(icemorph[text[1]:text[2]], "[[", "form_norm") == word)) # 1: gets all the normalized forms within a given range from IceMorph; 2: takes those match the word; 3: number of those
       lemma.value <- icemorph[which(sapply(icemorph, "[[", "form_norm") == word)][[1]]$lemma
-      lemma.freq.in.text <- length(which(sapply(icemorph[list.of.texts$text.name[1]:list.of.texts$text.name[2]], "[[", "lemma") == lemma.value))
+      lemma.freq.in.text <- length(which(sapply(icemorph[text[1]:text[2]], "[[", "lemma") == lemma.value))
       temp <- data.frame("Text"=text.name, "Words in Text"=text.tokens, "Word Frequency"=word.freq.in.text, "Lemma Frequency"=lemma.freq.in.text)
       wordstudy <- rbind(wordstudy, temp)
     }
